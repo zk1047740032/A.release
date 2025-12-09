@@ -530,21 +530,16 @@ class PeakDetector:
 # ===============  GUI & 流程编排  ===============
 class SingleFrequencyGUI:
     def __init__(self, parent=None):
+        self.parent = parent
+        
+        # --- 核心修改：如果是集成模式，直接使用父控件作为 root ---
         if parent is None:
             self.root = tk.Tk()
+            self.root.title("单频测试 - 独立模式")
+            self.root.geometry("1000x700") 
+            self.root.resizable(True, True)
         else:
-            self.root = tk.Toplevel(parent)
-        self.root.title('单频性测试')
-        self.root.resizable(True, True)
-        exe_path = r"C:\\PTS\\SingleFrequency\\Preci_Seed\\Preci-Seed.exe"
-        self.lc = LaserController(exe_path)
-        sw, sh = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
-        
-        def SetCenter(window, width, height):
-            sw, sh = window.winfo_screenwidth(), window.winfo_screenheight()
-            window.geometry(f"{width}x{height}+{(sw-width)//2}+{(sh-height)//2}")
-
-        SetCenter(self.root, 1390, 930)
+            self.root = parent # <--- 修改点：直接使用父 Frame
 
         self.params_1um = {
             # 仪器 & 输出

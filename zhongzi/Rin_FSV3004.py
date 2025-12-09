@@ -802,13 +802,23 @@ class TestRunner:
 # -------------------------
 class RinGUI:
     def __init__(self, parent=None):
+        self.parent = parent
+        
+        # --- 核心修改：如果是集成模式，直接使用父控件作为 root ---
         if parent is None:
             self.root = tk.Tk()
+            self.root.title("Rin (FSV3004) - 独立模式")
+            self.root.geometry("1170x630")
+            self.root.resizable(True, True)
+            try:
+                self.root.iconbitmap(r'PreciLasers.ico')
+            except:
+                pass
+            # 假设 set_center() 只有在独立模式下需要
+            if hasattr(self, 'set_center'):
+                self.set_center(1170, 630) 
         else:
-            self.root = tk.Toplevel(parent)
-        self.root.title("Rin_FSV3004")
-        self.root.resizable(True, True)
-        self.set_center(1170, 330)
+            self.root = parent # <--- 修改点：直接使用父 Frame
 
         # 默认参数（保留原脚本默认路径/IP）
         self.params = {

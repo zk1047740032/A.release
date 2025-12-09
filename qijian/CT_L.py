@@ -1036,13 +1036,22 @@ class TestRunner:
 # -------------------------
 class CT_L_GUI:
     def __init__(self, parent=None):
+        self.parent = parent
+        
+        # --- 核心修改：如果是集成模式，直接使用父控件作为 root ---
         if parent is None:
             self.root = tk.Tk()
+            self.root.title("CT Tuning - 线宽")
+            # 假设 set_center() 只有在独立模式下需要
+            if hasattr(self, 'set_center'):
+                self.set_center(1200, 800) 
+            self.root.resizable(True, True)
+            try:
+                self.root.iconbitmap(r'PreciLasers.ico')
+            except:
+                pass
         else:
-            self.root= tk.Toplevel(parent)
-        self.root.title('电流温度_线宽')
-        self.root.resizable(True, True)
-        self.set_center(1490, 1180)
+            self.root = parent # <--- 修改点：直接使用父 Frame
 
         self.params = {
             "osa_ip": "192.168.29.11",

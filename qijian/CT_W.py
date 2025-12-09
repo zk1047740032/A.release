@@ -934,14 +934,22 @@ class TestRunner:
 # -------------------------
 class CT_W_GUI:
     def __init__(self, parent=None):
+        self.parent = parent
+        
+        # --- 核心修改：如果是集成模式，直接使用父控件作为 root ---
         if parent is None:
             self.root = tk.Tk()
+            self.root.title("CT Tuning - 波长")
+            # 假设 set_center() 只有在独立模式下需要
+            if hasattr(self, 'set_center'):
+                self.set_center(1200, 800) 
+            self.root.resizable(True, True)
+            try:
+                self.root.iconbitmap(r'PreciLasers.ico')
+            except:
+                pass
         else:
-            self.root= tk.Toplevel(parent)
-        self.root.title('电流温度-波长测试系统')
-        self.root.resizable(True, True)
-        # 修改窗口大小以适应新布局
-        self.set_center(1490, 1090)
+            self.root = parent # <--- 修改点：直接使用父 Frame
 
         # defaults (added group2 params)
         self.params = {

@@ -504,21 +504,17 @@ class RinWorkflow:
 # -----------------------------
 class Rin_4051_GUI:
     def __init__(self, parent=None):
+        self.parent = parent
+        
+        # --- 核心修改：如果是集成模式，直接使用父控件作为 root ---
         if parent is None:
             self.root = tk.Tk()
+            self.root.title("Rin (Ceyear 4051) - 独立模式")
+            self.root.geometry("1000x800")
+            self.root.resizable(True, True)
+            # ... 其他窗口设置 ...
         else:
-            self.root = tk.Toplevel(parent)
-        self.root.title("Rin_4051")
-        self.root.resizable(True, True)
-
-        def SetCenter(window, width, height):
-            screenwidth = window.winfo_screenwidth()
-            screenheight = window.winfo_screenheight()
-            posx = (screenwidth - width) // 2
-            posy = (screenheight - height) // 2
-            window.geometry(f'{width}x{height}+{posx}+{posy}')
-
-        SetCenter(self.root, 348, 650)
+            self.root = parent # <--- 修改点：直接使用父 Frame
 
         # internal params (keys are used internally)
         self.params = {
@@ -545,9 +541,16 @@ class Rin_4051_GUI:
         self.worker_thread = None
 
     def create_widgets(self):
-        # 参数设置区域 (上半)
-        param_frame = tk.LabelFrame(self.root, text="参数设置", padx=8, pady=8)
-        param_frame.pack(fill=tk.X, padx=10, pady=5)
+        # 主容器：左侧为参数设置，右侧为运行日志
+        main_frame = tk.Frame(self.root)
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
+
+        # 左列容器：参数设置在上，按钮居中在下
+        left_col = tk.Frame(main_frame)
+        left_col.pack(side=tk.LEFT, fill=tk.Y, padx=(0, 10), pady=5)
+
+        param_frame = tk.LabelFrame(left_col, text="参数设置", padx=8, pady=8)
+        param_frame.pack(fill=tk.Y)
 
         self.entries = {}
         row = 0
@@ -560,22 +563,18 @@ class Rin_4051_GUI:
             self.entries[key] = ent
             row += 1
 
-        # 在参数设置框底部创建按钮区域
-        buttons_frame = tk.Frame(param_frame)
-        buttons_frame.grid(row=row, column=0, columnspan=3, pady=6)
+        # 按钮区域：放在参数设置框的下面并居中（保持按钮横向排列不变）
+        buttons_frame = tk.Frame(left_col)
+        buttons_frame.pack(pady=8)
 
-        buttons_frame.grid_columnconfigure(0, weight=1)
-        buttons_frame.grid_columnconfigure(1, weight=1)
-        buttons_frame.grid_columnconfigure(2, weight=1)
+        tk.Button(buttons_frame, text="开始测试", command=self.start_test, bg="#4CAF50", fg="#FFFFFF", width=12).pack(side=tk.LEFT, padx=6)
+        tk.Button(buttons_frame, text="停止测试", command=self.stop_test, bg="#f44336", fg="#FFFFFF", width=12).pack(side=tk.LEFT, padx=6)
+        tk.Button(buttons_frame, text="底噪测试", command=self.measure_background, bg="#f4a236", fg="#FFFFFF", width=12).pack(side=tk.LEFT, padx=6)
 
-        tk.Button(buttons_frame, text="开始测试", command=self.start_test, bg="#4CAF50", fg="#FFFFFF", width=12).grid(row=0, column=0, padx=4)
-        tk.Button(buttons_frame, text="停止测试", command=self.stop_test, bg="#f44336", fg="#FFFFFF", width=12).grid(row=0, column=1, padx=4)
-        tk.Button(buttons_frame, text="底噪测试", command=self.measure_background, bg="#f4a236", fg="#FFFFFF", width=12).grid(row=0, column=2, padx=4)
-
-        # 运行日志 (下半)
-        log_frame = tk.LabelFrame(self.root, text="运行日志", padx=6, pady=6)
-        log_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=6)
-        self.log_box = tk.Text(log_frame, height=18)
+        # 运行日志 (右侧)
+        log_frame = tk.LabelFrame(main_frame, text="运行日志", padx=6, pady=6)
+        log_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=(10, 0), pady=5)
+        self.log_box = tk.Text(log_frame)
         self.log_box.pack(fill=tk.BOTH, expand=True)
 
     def log(self, msg):

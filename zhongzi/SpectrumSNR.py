@@ -248,18 +248,16 @@ class SpectrumSNR:
 # ============ GUI 类 ============
 class SpectrumSNRGUI:
     def __init__(self, parent=None):
+        self.parent = parent
+        
+        # --- 核心修改：如果是集成模式，直接使用父控件作为 root ---
         if parent is None:
             self.root = tk.Tk()
+            self.root.title("信噪比测试 - 独立模式")
+            self.root.geometry("900x600") 
+            self.root.resizable(True, True)
         else:
-            self.root = tk.Toplevel(parent)
-        self.root.title("信噪比")
-        self.root.resizable(True, True)
-
-        def SetCenter(window, width, height):
-            sw, sh = window.winfo_screenwidth(), window.winfo_screenheight()
-            window.geometry(f"{width}x{height}+{(sw-width)//2}+{(sh-height)//2}")
-
-        SetCenter(self.root, 1280, 370)
+            self.root = parent # <--- 修改点：直接使用父 Frame
 
         # 默认参数
         self.params = {

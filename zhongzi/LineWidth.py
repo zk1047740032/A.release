@@ -196,19 +196,16 @@ class LinewidthTester:
 # ============ GUI 控制类 ============
 class LineWidthGUI:
     def __init__(self, parent=None):
+        self.parent = parent
+        
+        # --- 核心修改：如果是集成模式，直接使用父控件作为 root ---
         if parent is None:
             self.root = tk.Tk()
+            self.root.title("线宽测试 - 独立模式")
+            self.root.geometry("1000x700") 
+            self.root.resizable(True, True)
         else:
-            self.root = tk.Toplevel(parent)
-        self.root.title("线宽")
-        self.root.resizable(True, True)
-        
-        # 设置窗口大小和居中，考虑DPI缩放
-        base_width = 700
-        base_height = 230
-        scaled_width = int(base_width * scaling_factor)
-        scaled_height = int(base_height * scaling_factor)
-        self.set_center(self.root, scaled_width, scaled_height)
+            self.root = parent # <--- 修改点：直接使用父 Frame
         
         # 初始化参数
         self.params = {

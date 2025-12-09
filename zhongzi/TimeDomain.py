@@ -209,12 +209,16 @@ class TimeDomain:
 # ============ GUI 类 ============
 class TimeDomainGUI:
     def __init__(self, parent=None):
+        self.parent = parent
+        
+        # --- 核心修改：如果是集成模式，直接使用父控件作为 root ---
         if parent is None:
             self.root = tk.Tk()
+            self.root.title("时域测试 - 独立模式")
+            self.root.geometry("900x600") 
+            self.root.resizable(True, True)
         else:
-            self.root = tk.Toplevel(parent)
-        self.root.title("时域")
-        self.root.resizable(True, True)
+            self.root = parent # <--- 修改点：直接使用父 Frame
 
         # 内部参数仍使用英文键
         self.params = {
@@ -237,17 +241,6 @@ class TimeDomainGUI:
         }
 
         self.create_widgets()
-
-        def SetCenter(window, width, height):
-            screenwidth = window.winfo_screenwidth()
-            screenheight = window.winfo_screenheight()
-            posx = (screenwidth - width) // 2
-            posy = (screenheight - height) // 2
-            window.geometry(f'{width}x{height}+{posx}+{posy}')
-
-        self.root.update_idletasks()
-        SetCenter(self.root, 1280, 340)  # 调整为更宽的窗口，适应左右布局
-
 
     def log(self, msg):
         t = time.strftime("[%H:%M:%S]")
