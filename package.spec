@@ -2,7 +2,7 @@
 
 block_cipher = None
 
-a = Analysis(['MainGUI_multi.py'],
+a = Analysis(['main_platform.py'],
              pathex=['d:\Coding\Project\PreciTestSystem\A.release'],
              binaries=[],
              datas=[('PreciLasers.ico', '.')],
