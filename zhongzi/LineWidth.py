@@ -108,12 +108,13 @@ class LinewidthTester:
     def configure(self, center_freq, span, rbw, n_db_down):
         self.inst.write("INIT:CONT OFF")  # 关闭连续扫描
         # 添加单位：中心频率使用MHZ，带宽使用MHZ，RBW使用HZ
+        self.inst.write(f"DISP:TRAC:Y:RLEV -20dBm")  # 设置参考电平
         self.inst.write(f"FREQ:CENT {center_freq}MHZ")
         self.inst.write(f"FREQ:SPAN {span}KHZ")
         self.inst.write(f"BAND {rbw}HZ")
         self.inst.write("SWE:POIN 2001")  # 设置扫描点数
         self.inst.write(":AVER:COUN 20")
-        self.log("设置Count数为20")
+        #self.log("设置Count数为20")
         self.n_db_down = n_db_down
         self.log("完成参数设置")
 
