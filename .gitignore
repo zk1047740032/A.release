@@ -4,6 +4,11 @@
 *.user
 *.json
 
+# Python 虚拟环境
+.venv/
+venv/
+env/
+
 # Python 编译缓存
 __pycache__/
 *.py[cod]
